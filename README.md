@@ -22,11 +22,21 @@ The package includes:
 ## Install
 
 ```bash
-python3 -m pip install -e ".[phonetics,dev]"
+python3 -m pip install what-town-two-words
 ```
 
 The package works without optional dependencies, but CMUdict and true metaphone
-checks are best with `.[phonetics]`.
+checks are best with the optional phonetics extra:
+
+```bash
+python3 -m pip install "what-town-two-words[phonetics]"
+```
+
+For local development:
+
+```bash
+python3 -m pip install -e ".[phonetics,dev]"
+```
 
 ## Quick Use
 
