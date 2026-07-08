@@ -12,7 +12,7 @@ The reason for doing this is because it's funnier with a placename!
 
 The package includes:
 
-- optional user-supplied blacklist filtering
+- profanity blacklist filtering (not uploaded herein)
 - optional CMUdict homophone rejection via `pronouncing`
 - minimum Levenshtein distance filtering
 - optional metaphone collision rejection via `Metaphone`
