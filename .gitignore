@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Local environments
+.venv/
+.env
+
+# Generated/raw data
+data/build/
+data/raw/
+
+# Local run logs / temporary artifacts
+*.log
+*.pid
+
+# OS/editor noise
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "what-town-two-words"
+version = "0.1.0"
+description = "Local town.word.word geocodes built from filtered word lists and British town names."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Local What2Words" }]
+dependencies = []
+
+[project.optional-dependencies]
+phonetics = [
+  "pronouncing>=0.2.0",
+  "Metaphone>=0.6",
+]
+dev = [
+  "pytest>=8",
+]
+
+[project.scripts]
+what-town-two-words = "what_town_two_words.cli:main"
+
+[tool.setuptools.package-data]
+what_town_two_words = ["d
