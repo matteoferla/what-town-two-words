@@ -13,6 +13,7 @@ __pycache__/
 # Generated data
 data/build/
 data/parsed/*
+!data/parsed/README.md
 !data/parsed/os_names.csv
 !data/parsed/scowl_words.txt
 !data/parsed/word_scores.json
