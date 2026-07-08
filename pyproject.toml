@@ -9,7 +9,7 @@ description = "Local town.word.word geocodes built from filtered word lists and 
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-authors = [{ name = "Local What2Words" }]
+authors = [{ name = "Matteo Ferla" }]
 dependencies = []
 
 [project.optional-dependencies]
