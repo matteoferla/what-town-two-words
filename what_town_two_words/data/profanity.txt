@@ -1,18 +1,1 @@
-# Seed blacklist. Extend this with your own policy list.
-arse
-ass
-bastard
-bitch
-bollocks
-bugger
-crap
-cunt
-damn
-dick
-fuck
-fucker
-prick
-shit
-slut
-twat
-wank
+

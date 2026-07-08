@@ -11,12 +11,11 @@ but built from your own word list and British town names.
 
 The package includes:
 
-- profanity blacklist filtering
+- optional user-supplied blacklist filtering
 - optional CMUdict homophone rejection via `pronouncing`
 - minimum Levenshtein distance filtering
 - optional metaphone collision rejection via `Metaphone`
 - plural/singular pair rejection
-- optional Ollama smile-value scoring for collision tie-breaks
 - reversible integer and approximate lat/lon grid encoding
 
 ## Install
@@ -52,7 +51,11 @@ cell = coder.decode_latlon_code(code, resolution_m=5000)
 print(code, cell.center)
 ```
 
-## Ollama Tie-Breaks
+## Comedy Scoring Experiment
+
+There is experimental Ollama helper code for scoring words by comic,
+positive, or smile-value. It was used to explore the "funny" angle of the word
+list, not as a required part of the build pipeline.
 
 Run a small local model, for example:
 
@@ -71,53 +74,47 @@ scores = score_words_with_ollama(
 )
 ```
 
-The score is only meant to break ties between otherwise equal collision
-candidates. The expected direction is:
+The expected direction for the comedy experiment is:
 
 ```text
 meeting < penguin < klutz
 ```
 
-Use these scores with `build --preferences`; frequency rank still wins before
-smile-value is considered.
+Treat these scores as exploratory data. The normal build should rely on word
+rank, morphology, and collision filters rather than broad LLM weighting.
 
 ## Data Pipeline
 
 ```bash
-what-town-two-words extract-towns data/raw/os-open-names/*.csv \
+what-town-two-words extract-towns data/parsed/os-open-names/*.csv \
   --include-multiword \
   --out data/build/city-towns-villages-hamlets.txt
 
-what-town-two-words extract-towns data/raw/os-open-names/*.csv \
+what-town-two-words extract-towns data/parsed/os-open-names/*.csv \
   --include-multiword \
   --allowed-type City \
   --allowed-type Town \
   --out data/build/cities-towns.txt
 
-what-town-two-words extract-scowl data/raw/scowl/final/english-words.* \
+what-town-two-words extract-scowl data/parsed/scowl/final/english-words.* \
   --out data/build/candidate_words.txt
 
 what-town-two-words filter-kaikki \
-  --kaikki data/raw/kaikki/kaikki.org-dictionary-English.jsonl.gz \
+  --kaikki data/parsed/kaikki/kaikki.org-dictionary-English.jsonl.gz \
   --words data/build/candidate_words.txt \
   --out data/build/morph_words.txt \
   --metadata-out data/build/morph_metadata.tsv \
   --rejected-out data/build/morph_rejected.tsv
 
 what-town-two-words extract-scowl-ranked \
-  --db data/raw/scowl/wordlist/scowl.db \
+  --db data/parsed/scowl/wordlist/scowl.db \
   --out data/build/word_ranks.tsv \
   --max-size 60 \
   --spelling B
 
-what-town-two-words score data/build/candidate_words.txt \
-  --model llama3.2:1b \
-  --out data/build/word_preferences.json
-
 what-town-two-words build \
   --words data/build/morph_words.txt \
   --ranks data/build/word_ranks.tsv \
-  --preferences data/build/word_preferences.json \
   --out data/build/filtered_words.txt \
   --rejected-out data/build/rejected_words.tsv
 
@@ -143,10 +140,8 @@ comfortably exceeds the number of grid cells in your chosen bounding box.
 
 When collision filters find similar words, the builder processes lower-ranked
 words first, so the more common/preferred word is kept. SCOWL `size` is a coarse
-rank where lower means more common. If two words have the same rank, optional
-`--preferences` scores choose the word with stronger smile-value. A stronger
-corpus-frequency rank file in `word<TAB>rank` format should still be preferred
-whenever available.
+rank where lower means more common. A stronger corpus-frequency rank file in
+`word<TAB>rank` format should still be preferred whenever available.
 
 ## Design Notes
 
@@ -166,13 +161,13 @@ The current bias is deliberately collision-first:
   superlative forms.
 - **Collisions:** words are removed if they are too close by Levenshtein
   distance, share a metaphone key, are CMUdict homophones when that optional
-  dependency is installed, are profanity, or are plural/singular collisions.
+  dependency is installed, appear in a user-supplied blacklist, or are
+  plural/singular collisions.
 
-The "funny" angle is intentionally narrow. Early experiments used an Ollama
-model to score every word for fun/comical/positive energy, but broad scoring
-was too noisy and risked skewing the address space. The current role for an LLM
-is only to break ties between otherwise equal collision candidates. The working
-definition of smile-value prefers, in order:
+The "funny" angle was an experiment, not a production rule. Early experiments
+used an Ollama model to score words for fun/comical/positive energy, but broad
+scoring was too noisy and risked skewing the address space. The working
+definition of smile-value preferred, in order:
 
 1. Directly comic or playful meanings: `tickle`, `giggle`, `joke`, `clown`,
    `farce`.
@@ -186,6 +181,6 @@ definition of smile-value prefers, in order:
 7. Abstract, administrative, technical, medical, hostile, or bleak words, unless
    the concept itself is comic.
 
-This means `tickle` should beat `pickle` in an equal-rank collision, but a
-clearly more common word should still beat a funnier rare word. The LLM is a
-tasteful nudge, not the bouncer.
+This means `tickle` scored above `pickle` in the comedy experiment, while
+clearly more common words still belong ahead of funnier rare words in the actual
+address vocabulary.

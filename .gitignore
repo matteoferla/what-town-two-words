@@ -10,9 +10,12 @@ __pycache__/
 .venv/
 .env
 
-# Generated/raw data
+# Generated data
 data/build/
-data/raw/
+data/parsed/*
+!data/parsed/os_names.csv
+!data/parsed/scowl_words.txt
+!data/parsed/word_scores.json
 
 # Local run logs / temporary artifacts
 *.log
