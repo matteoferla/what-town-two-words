@@ -8,6 +8,7 @@
 
 A local, hackable `town.word.word` encoder inspired by what3words-style codes,
 but built from your own word list and British town names.
+The reason for doing this is because it's funnier with a placename!
 
 The package includes:
 
