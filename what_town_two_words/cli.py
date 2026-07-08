@@ -224,4 +224,4 @@ def _add_word_town_args(parser: argparse.ArgumentParser) -> None:
 
 
 if __name__ == "__main__":
-    main
+    main()

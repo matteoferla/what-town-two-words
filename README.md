@@ -143,4 +143,49 @@ comfortably exceeds the number of grid cells in your chosen bounding box.
 
 When collision filters find similar words, the builder processes lower-ranked
 words first, so the more common/preferred word is kept. SCOWL `size` is a coarse
-rank where lower means more common. 
+rank where lower means more common. If two words have the same rank, optional
+`--preferences` scores choose the word with stronger smile-value. A stronger
+corpus-frequency rank file in `word<TAB>rank` format should still be preferred
+whenever available.
+
+## Design Notes
+
+This project came out of a few experiments rather than a finished theory.
+The current bias is deliberately collision-first:
+
+- **First component:** OS Open Names settlements. The broad file keeps `City`,
+  `Town`, `Village`, `Hamlet`, `Suburban Area`, and `Other Settlement`; the
+  stricter alternative keeps only `City` and `Town`.
+- **Word source:** SCOWL/ESDB British words, with SCOWL `size` used as a rough
+  commonness rank. Lower SCOWL size wins collisions before any aesthetic
+  preference is considered.
+- **Morphology:** Kaikki/Wiktionary JSONL can remove inflected junk more
+  cleanly than suffix rules. The intended policy keeps noun lemmas, adjective
+  lemmas, and gerunds/present participles; it rejects plurals, pure adverbs,
+  pure base verbs, third-person forms, past forms, and most comparative or
+  superlative forms.
+- **Collisions:** words are removed if they are too close by Levenshtein
+  distance, share a metaphone key, are CMUdict homophones when that optional
+  dependency is installed, are profanity, or are plural/singular collisions.
+
+The "funny" angle is intentionally narrow. Early experiments used an Ollama
+model to score every word for fun/comical/positive energy, but broad scoring
+was too noisy and risked skewing the address space. The current role for an LLM
+is only to break ties between otherwise equal collision candidates. The working
+definition of smile-value prefers, in order:
+
+1. Directly comic or playful meanings: `tickle`, `giggle`, `joke`, `clown`,
+   `farce`.
+2. Comic mishap, awkwardness, slapstick, embarrassment, lewdness, bodily comedy,
+   or haplessness: `klutz`, `wobble`, `pratfall`, `bonk`.
+3. Words frequent in jokes, pub chat, comic scenes, innuendo, or stock comic
+   situations: `bar`, `priest`, `banana`, `trousers`.
+4. Cute, endearing, or inherently odd referents: `penguin`, `aardvark`.
+5. Funny sound or mouthfeel: `pickle`, `noodle`, `kazoo`.
+6. Neutral vivid concrete words: `rocket`, `lantern`.
+7. Abstract, administrative, technical, medical, hostile, or bleak words, unless
+   the concept itself is comic.
+
+This means `tickle` should beat `pickle` in an equal-rank collision, but a
+clearly more common word should still beat a funnier rare word. The LLM is a
+tasteful nudge, not the bouncer.

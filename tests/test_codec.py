@@ -104,4 +104,4 @@ def test_scored_word_list_round_trip(tmp_path: Path):
     assert words == ["meeting", "penguin", "klutz"]
     assert scores["meeting"] == 0.1
     assert scores["penguin"] == 0.6
-    assert scores["klutz"
+    assert scores["klutz"] == 0.9

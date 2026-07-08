@@ -164,4 +164,4 @@ def _load_builtin_lines(name: str) -> list[str]:
             line.strip().lower()
             for line in handle
             if line.strip() and not line.lstrip().startswith("#")
-       
+        ]

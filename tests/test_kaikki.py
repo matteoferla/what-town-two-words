@@ -45,4 +45,4 @@ def test_extract_kaikki_word_metadata_policy(tmp_path: Path):
     assert rejected["pailfuls"] == "plural"
     assert rejected["playfully"] == "adverb"
     assert rejected["abandons"] == "third-person"
-    assert stats.kept ==
+    assert stats.kept == 4

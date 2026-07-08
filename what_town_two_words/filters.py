@@ -114,4 +114,4 @@ def _rough_phonetic_normalize(word: str) -> str:
         word = word.replace(old, new)
     if len(word) > 3 and word.endswith("e"):
         word = word[:-1]
-    return wo
+    return word

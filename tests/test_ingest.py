@@ -26,4 +26,4 @@ def test_load_scowl_words(tmp_path: Path):
     words, stats = load_scowl_words([str(path)], min_len=3, max_len=8)
 
     assert words == ["klutz", "meeting", "penguin"]
-    assert stats.kept ==
+    assert stats.kept == 3
